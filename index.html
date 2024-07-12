@@ -67,7 +67,7 @@
             event.preventDefault();
 
             // Collect form data
-            var form = document.getElementById('Beacon Survey');
+            var form = document.getElementById('beaconSurvey');
             var formData = new FormData(form);
 
             var templateParams = {
@@ -102,7 +102,7 @@
 
 <div class="container">
     <h2>Beacon survey</h2>
-    <form id="Beacon Survey" onsubmit="sendEmail(event)">
+    <form id="beaconSurvey" onsubmit="sendEmail(event)">
         <div class="form-group">
             <label for="age">Age:</label>
             <input type="number" id="age" name="age" min="18" max="25" required>
