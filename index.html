@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Beacon survey</title>
+    <title>Beacon Survey</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -56,6 +56,15 @@
             text-align: center;
             margin-top: 20px;
         }
+        .image {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
     </style>
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script>
@@ -87,7 +96,7 @@
                 email: formData.get('email')
             };
 
-            emailjs.send('beacon_survey', 'template_beacon', templateParams)
+            emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
                     form.style.display = 'none';
@@ -101,7 +110,10 @@
 <body>
 
 <div class="container">
-    <h2>Beacon survey</h2>
+    <h2>Beacon Survey</h2>
+    <div class="image">
+        <img src="images/example1.jpg" alt="Example Image 1">
+    </div>
     <form id="beaconSurvey" onsubmit="sendEmail(event)">
         <div class="form-group">
             <label for="age">Age:</label>
