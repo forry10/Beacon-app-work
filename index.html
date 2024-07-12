@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Beacon App - here to help</title>
+    <title>Beacon survey</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f0f8ff;
-            color: #333;
+            background-color: #B2C9E2;
+            color: #2D2D2D;
             margin: 0;
             padding: 0;
         }
         .container {
             max-width: 600px;
             margin: 50px auto;
-            background-color: #fff;
+            background-color: #FFFFFF;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
         h2, h3 {
-            color: #0066cc;
+            color: #2D2D2D;
         }
         .form-group {
             margin-bottom: 20px;
@@ -32,7 +32,7 @@
         .form-group input, .form-group textarea, .form-group select {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #CECECD;
             border-radius: 4px;
             box-sizing: border-box;
         }
@@ -41,15 +41,15 @@
         }
         .form-group button {
             padding: 10px 20px;
-            background-color: #0066cc;
-            color: white;
+            background-color: #2D2D2D;
+            color: #FFFFFF;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
         }
         .form-group button:hover {
-            background-color: #005bb5;
+            background-color: #1F1F1F;
         }
         #thankYouMessage {
             display: none;
@@ -57,12 +57,52 @@
             margin-top: 20px;
         }
     </style>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+        (function(){
+            emailjs.init("xP9NzF_x-ZfzKseVY");
+        })();
+
+        function sendEmail(event) {
+            event.preventDefault();
+
+            // Collect form data
+            var form = document.getElementById('Beacon Survey');
+            var formData = new FormData(form);
+
+            var templateParams = {
+                age: formData.get('age'),
+                gender: formData.get('gender'),
+                mentalHealth: formData.get('mentalHealth'),
+                talkToFriends: formData.get('talkToFriends'),
+                friendResponse: formData.get('friendResponse'),
+                lightBeacon: formData.get('lightBeacon'),
+                friendBeacon: formData.get('friendBeacon'),
+                followInfluencers: formData.get('followInfluencers'),
+                tiredOfFake: formData.get('tiredOfFake'),
+                downloadApp: formData.get('downloadApp'),
+                colorScheme: formData.get('colorScheme'),
+                appFeel: formData.get('appFeel'),
+                branding: formData.get('branding'),
+                email: formData.get('email')
+            };
+
+            emailjs.send('beacon_survey', 'template_beacon', templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    form.style.display = 'none';
+                    document.getElementById('thankYouMessage').style.display = 'block';
+                }, function(error) {
+                    console.log('FAILED...', error);
+                });
+        }
+    </script>
 </head>
 <body>
 
 <div class="container">
-    <h2>Market Research Feedback Form</h2>
-    <form id="marketResearchForm">
+    <h2>Beacon survey</h2>
+    <form id="Beacon Survey" onsubmit="sendEmail(event)">
         <div class="form-group">
             <label for="age">Age:</label>
             <input type="number" id="age" name="age" min="18" max="25" required>
@@ -141,14 +181,6 @@
         <h3>Thank you for your feedback!</h3>
     </div>
 </div>
-
-<script>
-    document.getElementById('marketResearchForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        document.getElementById('marketResearchForm').style.display = 'none';
-        document.getElementById('thankYouMessage').style.display = 'block';
-    });
-</script>
 
 </body>
 </html>
