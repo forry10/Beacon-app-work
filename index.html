@@ -74,11 +74,14 @@
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script>
         (function(){
+            console.log('Initializing EmailJS');
             emailjs.init("xP9NzF_x-ZfzKseVY");
         })();
 
         function sendEmail(event) {
             event.preventDefault();
+            alert('Submit button clicked'); // Verify if the function is being called
+            console.log('Submit button clicked');
 
             // Collect form data
             var form = document.getElementById('beaconSurvey');
@@ -100,6 +103,8 @@
                 branding: formData.get('branding'),
                 email: formData.get('email')
             };
+
+            console.log('Form data:', templateParams);
 
             emailjs.send('beacon_survey', 'template_beacon', templateParams)
                 .then(function(response) {
