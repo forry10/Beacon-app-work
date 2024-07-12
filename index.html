@@ -1,3 +1,23 @@
+Let's incorporate the images into the HTML file as requested. We will place `Beacon_Logo-15.webp` at the top of the form and intersperse `Beacon_Logo-17.webp` and `Easy_Blue.webp` around the form content.
+
+### Directory Structure
+Ensure your directory structure looks like this:
+
+```
+feedback-form/
+├── images/
+│   ├── Beacon_Logo-15.webp
+│   ├── Beacon_Logo-17.webp
+│   └── Easy_Blue.webp
+├── index.html
+└── README.md
+```
+
+### Updated HTML File
+
+Here is the updated HTML file:
+
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -65,6 +85,17 @@
             height: auto;
             border-radius: 8px;
         }
+        .left-img {
+            float: left;
+            margin-right: 20px;
+        }
+        .right-img {
+            float: right;
+            margin-left: 20px;
+        }
+        .clear {
+            clear: both;
+        }
     </style>
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script>
@@ -110,16 +141,19 @@
 <body>
 
 <div class="container">
-    <h2>Beacon Survey</h2>
     <div class="image">
-        <img src="images/example1.jpg" alt="Example Image 1">
+        <img src="images/Beacon_Logo-15.webp" alt="Beacon Logo">
+    </div>
+    <h2>Beacon Survey</h2>
+    <div class="form-group">
+        <img src="images/Beacon_Logo-17.webp" class="left-img" alt="Beacon Logo 17">
+        <label for="age">Age:</label>
+        <input type="number" id="age" name="age" min="18" max="25" required>
+        <div class="clear"></div>
     </div>
     <form id="beaconSurvey" onsubmit="sendEmail(event)">
         <div class="form-group">
-            <label for="age">Age:</label>
-            <input type="number" id="age" name="age" min="18" max="25" required>
-        </div>
-        <div class="form-group">
+            <img src="images/Easy_Blue.webp" class="right-img" alt="Easy Blue">
             <label for="gender">Gender:</label>
             <select id="gender" name="gender" required>
                 <option value="">Select...</option>
@@ -128,71 +162,56 @@
                 <option value="non-binary">Non-binary</option>
                 <option value="prefer-not-to-say">Prefer not to say</option>
             </select>
+            <div class="clear"></div>
         </div>
         <div class="form-group">
+            <img src="images/Beacon_Logo-17.webp" class="left-img" alt="Beacon Logo 17">
             <label for="mentalHealth">1. Have you ever struggled with your mental health?</label>
             <textarea id="mentalHealth" name="mentalHealth" rows="3" required></textarea>
+            <div class="clear"></div>
         </div>
         <div class="form-group">
+            <img src="images/Easy_Blue.webp" class="right-img" alt="Easy Blue">
             <label for="talkToFriends">2. Did you talk to your friends about it?</label>
             <textarea id="talkToFriends" name="talkToFriends" rows="3" required></textarea>
+            <div class="clear"></div>
         </div>
         <div class="form-group">
+            <img src="images/Beacon_Logo-17.webp" class="left-img" alt="Beacon Logo 17">
             <label for="friendResponse">3. If your friend told you they were struggling, what would you think and how would you respond?</label>
             <textarea id="friendResponse" name="friendResponse" rows="3" required></textarea>
+            <div class="clear"></div>
         </div>
 
         <h3>App Concept</h3>
-        <p>“Essentially, it’s a social network for sharing the stuff you don’t want to share on Instagram. The real, raw, unfiltered reality of life. It’s the equivalent of opening up your mental health journal and letting everybody read it. A chance to be vulnerable and ask for support.”</p>
-        
         <div class="form-group">
+            <img src="images/Easy_Blue.webp" class="right-img" alt="Easy Blue">
+            <p>“Essentially, it’s a social network for sharing the stuff you don’t want to share on Instagram. The real, raw, unfiltered reality of life. It’s the equivalent of opening up your mental health journal and letting everybody read it. A chance to be vulnerable and ask for support.”</p>
+            <div class="clear"></div>
+        </div>
+        <div class="form-group">
+            <img src="images/Beacon_Logo-17.webp" class="left-img" alt="Beacon Logo 17">
             <label for="lightBeacon">4. Would you ever light a Beacon yourself?</label>
             <textarea id="lightBeacon" name="lightBeacon" rows="3" required></textarea>
+            <div class="clear"></div>
         </div>
         <div class="form-group">
+            <img src="images/Easy_Blue.webp" class="right-img" alt="Easy Blue">
             <label for="friendBeacon">5. If your friend lit a Beacon, would you send them support / interact with it?</label>
             <textarea id="friendBeacon" name="friendBeacon" rows="3" required></textarea>
+            <div class="clear"></div>
         </div>
         <div class="form-group">
+            <img src="images/Beacon_Logo-17.webp" class="left-img" alt="Beacon Logo 17">
             <label for="followInfluencers">6. Would you be interested in following influencers / celebrities on this and seeing their honest behind the scenes difficulties?</label>
             <textarea id="followInfluencers" name="followInfluencers" rows="3" required></textarea>
+            <div class="clear"></div>
         </div>
         <div class="form-group">
+            <img src="images/Easy_Blue.webp" class="right-img" alt="Easy Blue">
             <label for="tiredOfFake">7. Are you tired of how fake everybody’s life seems on social media?</label>
             <textarea id="tiredOfFake" name="tiredOfFake" rows="3" required></textarea>
+            <div class="clear"></div>
         </div>
         <div class="form-group">
-            <label for="downloadApp">8. Would you download this app?</label>
-            <textarea id="downloadApp" name="downloadApp" rows="3" required></textarea>
-        </div>
-        
-        <h3>App Design Preferences</h3>
-        <div class="form-group">
-            <label for="colorScheme">What color scheme do you prefer for the app?</label>
-            <textarea id="colorScheme" name="colorScheme" rows="3" required></textarea>
-        </div>
-        <div class="form-group">
-            <label for="appFeel">How should the app feel (e.g., friendly, professional, etc.)?</label>
-            <textarea id="appFeel" name="appFeel" rows="3" required></textarea>
-        </div>
-        <div class="form-group">
-            <label for="branding">Any suggestions for the app’s branding?</label>
-            <textarea id="branding" name="branding" rows="3" required></textarea>
-        </div>
-        
-        <div class="form-group">
-            <label for="email">Email (for joining the waitlist):</label>
-            <input type="email" id="email" name="email" required>
-        </div>
-        
-        <div class="form-group">
-            <button type="submit">Submit</button>
-        </div>
-    </form>
-    <div id="thankYouMessage">
-        <h3>Thank you for your feedback!</h3>
-    </div>
-</div>
-
-</body>
-</html>
+            <img src="images/Beacon_Logo-17.webp" class="left-img
