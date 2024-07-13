@@ -2,13 +2,37 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const path = require('path');
+const mongoose = require('mongoose');
 const app = express();
 const port = 3000;
+
+mongoose.connect('mongodb://localhost:27017/beaconSurvey', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+
+const surveySchema = new mongoose.Schema({
+    age: Number,
+    gender: String,
+    mentalHealth: String,
+    talkToFriends: String,
+    friendResponse: String,
+    lightBeacon: String,
+    friendBeacon: String,
+    followInfluencers: String,
+    tiredOfFake: String,
+    downloadApp: String,
+    colorScheme: String,
+    appFeel: String,
+    branding: String,
+    email: String
+});
+
+const Survey = mongoose.model('Survey', surveySchema);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/submit-survey', (req, res) => {
@@ -17,22 +41,36 @@ app.post('/submit-survey', (req, res) => {
     // Transform the data
     const transformedData = transformData(formData);
 
-    // Store the data (For demonstration, we'll log it to the console. You can store it in a database)
-    console.log('Transformed Data:', transformedData);
-
-    // Send an email with the transformed data
-    sendEmail(transformedData);
-
-    res.send('Survey submitted successfully');
+    // Save to MongoDB
+    const newSurvey = new Survey(transformedData);
+    newSurvey.save((err) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Failed to save survey data');
+        } else {
+            console.log('Survey data saved:', transformedData);
+            sendEmail(transformedData);
+            res.send('Survey submitted successfully');
+        }
+    });
 });
 
 function transformData(data) {
-    // Example transformation
     return {
         age: data.age,
         gender: data.gender.toUpperCase(),
         mentalHealth: data.mentalHealth === 'yes' ? 'Struggled' : 'Not Struggled',
-        // Add other transformations as needed
+        talkToFriends: data.talkToFriends,
+        friendResponse: data.friendResponse,
+        lightBeacon: data.lightBeacon,
+        friendBeacon: data.friendBeacon,
+        followInfluencers: data.followInfluencers,
+        tiredOfFake: data.tiredOfFake,
+        downloadApp: data.downloadApp,
+        colorScheme: data.colorScheme,
+        appFeel: data.appFeel,
+        branding: data.branding,
+        email: data.email
     };
 }
 
@@ -41,8 +79,8 @@ function sendEmail(data) {
     let transporter = nodemailer.createTransport({
         service: 'Gmail', // Replace with your email provider
         auth: {
-            user: 'your-email@gmail.com', // Replace with your email
-            pass: 'your-email-password' // Replace with your email password
+            user: 'jack.forry10@gmail.com', // Replace with your email
+            pass: 'aiwx sodx aict twhm' // Replace with your app password
         }
     });
 
