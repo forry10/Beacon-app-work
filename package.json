@@ -1,0 +1,13 @@
+{
+  "name": "beacon-app-work",
+  "version": "1.0.0",
+  "description": "This repository contains a market research feedback form. The form collects data from users and sends it via email using EmailJS.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
