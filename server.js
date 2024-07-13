@@ -6,10 +6,7 @@ const mongoose = require('mongoose');
 const app = express();
 const port = 3000;
 
-// Update the connection URI if needed
-const mongoURI = 'mongodb://localhost:27017/beaconSurvey';
-
-mongoose.connect(mongoURI, {
+mongoose.connect('mongodb://localhost:27017/beaconSurvey', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
@@ -94,7 +91,7 @@ async function sendEmail(data) {
     });
 
     let mailOptions = {
-        from: 'jack.forry10@gmail.com',
+        from: data.email, // Use the respondent's email
         to: 'jack.forry10@gmail.com',
         subject: 'Survey Results',
         text: JSON.stringify(data, null, 2) // Convert data to a string for the email body
