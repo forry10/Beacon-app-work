@@ -100,6 +100,7 @@
 
         function sendEmail(event) {
             event.preventDefault();
+            alert('Submit button clicked'); // Verify if the function is being called
             console.log('Submit button clicked');
 
             // Collect form data
@@ -128,10 +129,12 @@
             emailjs.send('beacon_survey', 'template_beacon', templateParams)
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
+                    alert('Email sent successfully!');
                     form.style.display = 'none';
                     document.getElementById('thankYouMessage').style.display = 'block';
                 }, function(error) {
                     console.log('FAILED...', error);
+                    alert('Failed to send email. Please try again later.');
                 });
         }
 
