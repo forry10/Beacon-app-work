@@ -126,6 +126,23 @@
 
             console.log('Form data:', templateParams);
 
+            fetch('http://localhost:3000/submit-survey', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(templateParams)
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log('Backend success:', data);
+                alert('Survey data sent to backend!');
+            })
+            .catch((error) => {
+                console.error('Backend error:', error);
+                alert('Failed to submit survey to backend. Please try again later.');
+            });
+
             emailjs.send('beacon_survey', 'template_beacon', templateParams)
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
