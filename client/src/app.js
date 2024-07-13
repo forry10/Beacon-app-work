@@ -1,10 +1,10 @@
 import React from 'react';
-import './App.css';
-import SurveyForm from './SurveyForm';
+import './app.css';
+import SurveyForm from './surveyform';
 
 function App() {
   return (
-    <div className="App">
+    <div className="app">
       <SurveyForm />
     </div>
   );

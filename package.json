@@ -1,0 +1,27 @@
+{
+  "name": "beacon-app-work",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "concurrently \"npm run start:server\" \"npm run start:client\"",
+    "start:server": "cross-env NODE_ENV=production node backend/server.js",
+    "start:client": "cross-env BROWSER=none npm start --prefix client",
+    "build": "npm run build:client && npm run move-build",
+    "build:client": "cross-env npm run build --prefix client",
+    "move-build": "xcopy /s /e /y client\\build\\* backend\\public\\"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
+    "concurrently": "^6.0.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^10.0.0",
+    "emailjs-com": "^2.6.4",
+    "express": "^4.17.1",
+    "mongoose": "^5.13.8",
+    "nodemailer": "^6.6.3",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-scripts": "4.0.3"
+  }
+}

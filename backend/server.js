@@ -8,13 +8,21 @@ const mongoose = require('mongoose');
 const app = express();
 const port = process.env.PORT || 3000;
 
-mongoose.connect(process.env.MONGODB_URI, {
+const mongoURI = process.env.MONGODB_URI;
+
+if (!mongoURI) {
+    console.error('MongoDB connection string is not set in environment variables.');
+    process.exit(1);
+}
+
+mongoose.connect(mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
     console.log('Successfully connected to MongoDB');
 }).catch(err => {
     console.error('Failed to connect to MongoDB', err);
+    process.exit(1);
 });
 
 const surveySchema = new mongoose.Schema({
@@ -39,6 +47,7 @@ const Survey = mongoose.model('Survey', surveySchema);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.post('/submit-survey', async (req, res) => {
@@ -98,6 +107,7 @@ async function sendEmail(data) {
     return transporter.sendMail(mailOptions);
 }
 
+// Catch-all handler to send back React's index.html for any requests that don't match API routes
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
