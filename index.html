@@ -143,12 +143,26 @@
             var formGroups = document.querySelectorAll('.form-group');
             formGroups[currentQuestion].classList.add('active');
 
+            function validateCurrentGroup() {
+                var currentGroup = formGroups[currentQuestion];
+                var inputs = currentGroup.querySelectorAll('input, textarea, select');
+                for (var i = 0; i < inputs.length; i++) {
+                    if (!inputs[i].checkValidity()) {
+                        inputs[i].reportValidity();
+                        return false;
+                    }
+                }
+                return true;
+            }
+
             var nextButtons = document.querySelectorAll('.next-button');
             nextButtons.forEach(function(button, index) {
                 button.addEventListener('click', function() {
-                    formGroups[currentQuestion].classList.remove('active');
-                    currentQuestion = (currentQuestion + 1) % formGroups.length;
-                    formGroups[currentQuestion].classList.add('active');
+                    if (validateCurrentGroup()) {
+                        formGroups[currentQuestion].classList.remove('active');
+                        currentQuestion = (currentQuestion + 1) % formGroups.length;
+                        formGroups[currentQuestion].classList.add('active');
+                    }
                 });
             });
 
