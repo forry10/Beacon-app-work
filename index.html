@@ -37,7 +37,8 @@
             box-sizing: border-box;
         }
         .form-group textarea {
-            resize: vertical;
+            resize: none;
+            overflow: hidden;
         }
         .form-group button {
             padding: 10px 20px;
@@ -70,6 +71,12 @@
             margin: 20px auto;
             max-width: 150px;
         }
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px;
+                padding: 10px;
+            }
+        }
     </style>
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script>
@@ -80,7 +87,6 @@
 
         function sendEmail(event) {
             event.preventDefault();
-            alert('Submit button clicked'); // Verify if the function is being called
             console.log('Submit button clicked');
 
             // Collect form data
@@ -115,6 +121,28 @@
                     console.log('FAILED...', error);
                 });
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var textareas = document.querySelectorAll('textarea');
+            textareas.forEach(function(textarea) {
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = (this.scrollHeight) + 'px';
+                });
+            });
+
+            var formGroups = document.querySelectorAll('.form-group');
+            formGroups.forEach(function(group, index) {
+                var inputs = group.querySelectorAll('input, textarea, select');
+                inputs.forEach(function(input) {
+                    input.addEventListener('change', function() {
+                        if (index < formGroups.length - 1) {
+                            formGroups[index + 1].scrollIntoView({ behavior: 'smooth' });
+                        }
+                    });
+                });
+            });
+        });
     </script>
 </head>
 <body>
@@ -141,11 +169,19 @@
         </div>
         <div class="form-group">
             <label for="mentalHealth">1. Have you ever struggled with your mental health?</label>
-            <textarea id="mentalHealth" name="mentalHealth" rows="3" required></textarea>
+            <select id="mentalHealth" name="mentalHealth" required>
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="talkToFriends">2. Did you talk to your friends about it?</label>
-            <textarea id="talkToFriends" name="talkToFriends" rows="3" required></textarea>
+            <select id="talkToFriends" name="talkToFriends" required>
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="friendResponse">3. If your friend told you they were struggling, what would you think and how would you respond?</label>
@@ -157,23 +193,43 @@
 
         <div class="form-group">
             <label for="lightBeacon">4. Would you ever light a Beacon yourself?</label>
-            <textarea id="lightBeacon" name="lightBeacon" rows="3" required></textarea>
+            <select id="lightBeacon" name="lightBeacon" required>
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="friendBeacon">5. If your friend lit a Beacon, would you send them support / interact with it?</label>
-            <textarea id="friendBeacon" name="friendBeacon" rows="3" required></textarea>
+            <select id="friendBeacon" name="friendBeacon" required>
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="followInfluencers">6. Would you be interested in following influencers / celebrities on this and seeing their honest behind the scenes difficulties?</label>
-            <textarea id="followInfluencers" name="followInfluencers" rows="3" required></textarea>
+            <select id="followInfluencers" name="followInfluencers" required>
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="tiredOfFake">7. Are you tired of how fake everybody’s life seems on social media?</label>
-            <textarea id="tiredOfFake" name="tiredOfFake" rows="3" required></textarea>
+            <select id="tiredOfFake" name="tiredOfFake" required>
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="downloadApp">8. Would you download this app?</label>
-            <textarea id="downloadApp" name="downloadApp" rows="3" required></textarea>
+            <select id="downloadApp" name="downloadApp" required>
+                <option value="">Select...</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select>
         </div>
         
         <h3>App Design Preferences</h3>
