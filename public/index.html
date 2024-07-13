@@ -23,6 +23,10 @@
         }
         .form-group {
             margin-bottom: 20px;
+            display: none;
+        }
+        .form-group.active {
+            display: block;
         }
         .form-group label {
             display: block;
@@ -87,7 +91,7 @@
             }
         }
     </style>
-    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
         (function(){
             console.log('Initializing EmailJS');
@@ -96,6 +100,7 @@
 
         function sendEmail(event) {
             event.preventDefault();
+            alert('Submit button clicked'); // Verify if the function is being called
             console.log('Submit button clicked');
 
             // Collect form data
@@ -121,34 +126,68 @@
 
             console.log('Form data:', templateParams);
 
+            fetch('http://localhost:3000/submit-survey', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(templateParams)
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log('Backend success:', data);
+                alert('Survey data sent to backend!');
+            })
+            .catch((error) => {
+                console.error('Backend error:', error);
+                alert('Failed to submit survey to backend. Please try again later.');
+            });
+
             emailjs.send('beacon_survey', 'template_beacon', templateParams)
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
+                    alert('Email sent successfully!');
                     form.style.display = 'none';
                     document.getElementById('thankYouMessage').style.display = 'block';
                 }, function(error) {
                     console.log('FAILED...', error);
+                    alert('Failed to send email. Please try again later.');
                 });
         }
 
         document.addEventListener("DOMContentLoaded", function() {
+            var currentQuestion = 0;
+            var formGroups = document.querySelectorAll('.form-group');
+            formGroups[currentQuestion].classList.add('active');
+
+            function validateCurrentGroup() {
+                var currentGroup = formGroups[currentQuestion];
+                var inputs = currentGroup.querySelectorAll('input, textarea, select');
+                for (var i = 0; i < inputs.length; i++) {
+                    if (!inputs[i].checkValidity()) {
+                        inputs[i].reportValidity();
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            var nextButtons = document.querySelectorAll('.next-button');
+            nextButtons.forEach(function(button, index) {
+                button.addEventListener('click', function() {
+                    if (validateCurrentGroup()) {
+                        formGroups[currentQuestion].classList.remove('active');
+                        currentQuestion = (currentQuestion + 1) % formGroups.length;
+                        formGroups[currentQuestion].classList.add('active');
+                    }
+                });
+            });
+
             var textareas = document.querySelectorAll('textarea');
             textareas.forEach(function(textarea) {
                 textarea.addEventListener('input', function() {
                     this.style.height = 'auto';
                     this.style.height = (this.scrollHeight) + 'px';
-                });
-            });
-
-            var formGroups = document.querySelectorAll('.form-group');
-            formGroups.forEach(function(group, index) {
-                var inputs = group.querySelectorAll('input, textarea, select');
-                inputs.forEach(function(input) {
-                    input.addEventListener('change', function() {
-                        if (index < formGroups.length - 1) {
-                            formGroups[index + 1].scrollIntoView({ behavior: 'smooth' });
-                        }
-                    });
                 });
             });
         });
@@ -165,6 +204,7 @@
         <div class="form-group">
             <label for="age">Age:</label>
             <input type="number" id="age" name="age" min="18" max="80" required>
+            <button type="button" class="next-button">Next</button>
         </div>
         <div class="form-group">
             <label for="gender">Gender:</label>
@@ -175,6 +215,7 @@
                 <option value="non-binary">Non-binary</option>
                 <option value="prefer-not-to-say">Prefer not to say</option>
             </select>
+            <button type="button" class="next-button">Next</button>
         </div>
         <div class="form-group">
             <label for="mentalHealth">1. Have you ever struggled with your mental health?</label>
@@ -182,6 +223,7 @@
                 <label><input type="radio" name="mentalHealth" value="yes" required> Yes</label>
                 <label><input type="radio" name="mentalHealth" value="no" required> No</label>
             </div>
+            <button type="button" class="next-button">Next</button>
         </div>
         <div class="form-group">
             <label for="talkToFriends">2. Did you talk to your friends about it?</label>
@@ -189,83 +231,83 @@
                 <label><input type="radio" name="talkToFriends" value="yes" required> Yes</label>
                 <label><input type="radio" name="talkToFriends" value="no" required> No</label>
             </div>
+            <button type="button" class="next-button">Next</button>
         </div>
         <div class="form-group">
             <label for="friendResponse">3. If your friend told you they were struggling, what would you think and how would you respond?</label>
             <textarea id="friendResponse" name="friendResponse" rows="3" required></textarea>
+            <button type="button" class="next-button">Next</button>
         </div>
-
-        <h3>App Concept</h3>
-        <p>A new social platform where users can 'Light a beacon' when they're struggling with their mental health.<br><br>
-        While a beacon is lit, the user can jot down their thoughts and feelings, and other users can view the beacon and add their support.<br><br>
-        After 24 hours, beacons go out and are saved down as an entry in the user's journal.<br><br>
-        Users can follow each other and support each other in various ways.<br><br>
-        Essentially, it’s a social network for sharing the stuff you don’t want to share on Instagram. The real, raw, unfiltered reality of life. It’s the equivalent of opening up your mental health journal and letting everybody read it. A chance to be vulnerable and ask for support.<br><br>
-        <a href="https://beaconapp.ai">Learn more</a></p>
-
         <div class="form-group">
             <label for="lightBeacon">4. Would you ever light a Beacon yourself?</label>
-            <select id="lightBeacon" name="lightBeacon" required>
-                <option value="">Select...</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-            </select>
+            <div class="radio-group">
+                <label><input type="radio" name="lightBeacon" value="yes" required> Yes</label>
+                <label><input type="radio" name="lightBeacon" value="no" required> No</label>
+            </div>
+            <button type="button" class="next-button">Next</button>
         </div>
         <div class="form-group">
             <label for="friendBeacon">5. If your friend lit a Beacon, would you send them support / interact with it?</label>
-            <select id="friendBeacon" name="friendBeacon" required>
-                <option value="">Select...</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-            </select>
+            <div class="radio-group">
+                <label><input type="radio" name="friendBeacon" value="yes" required> Yes</label>
+                <label><input type="radio" name="friendBeacon" value="no" required> No</label>
+            </div>
+            <button type="button" class="next-button">Next</button>
         </div>
         <div class="form-group">
             <label for="followInfluencers">6. Would you be interested in following influencers / celebrities on this and seeing their honest behind the scenes difficulties?</label>
-            <select id="followInfluencers" name="followInfluencers" required>
-                <option value="">Select...</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-            </select>
+            <div class="radio-group">
+                <label><input type="radio" name="followInfluencers" value="yes" required> Yes</label>
+                <label><input type="radio" name="followInfluencers" value="no" required> No</label>
+            </div>
+            <button type="button" class="next-button">Next</button>
         </div>
         <div class="form-group">
             <label for="tiredOfFake">7. Are you tired of how fake everybody’s life seems on social media?</label>
-            <select id="tiredOfFake" name="tiredOfFake" required>
-                <option value="">Select...</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-            </select>
+            <div class="radio-group">
+                <label><input type="radio" name="tiredOfFake" value="yes" required> Yes</label>
+                <label><input type="radio" name="tiredOfFake" value="no" required> No</label>
+            </div>
+            <button type="button" class="next-button">Next</button>
         </div>
         <div class="form-group">
             <label for="downloadApp">8. Would you download this app?</label>
-            <select id="downloadApp" name="downloadApp" required>
-                <option value="">Select...</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-            </select>
+            <div class="radio-group">
+                <label><input type="radio" name="downloadApp" value="yes" required> Yes</label>
+                <label><input type="radio" name="downloadApp" value="no" required> No</label>
+            </div>
+            <button type="button" class="next-button">Next</button>
         </div>
         
         <h3>App Design Preferences</h3>
         <div class="form-group">
             <label for="colorScheme">What color scheme do you prefer for the app?</label>
             <textarea id="colorScheme" name="colorScheme" rows="3" required></textarea>
+            <button type="button" class="next-button">Next</button>
         </div>
         <div class="form-group">
             <label for="appFeel">How should the app feel (e.g., friendly, professional, etc.)?</label>
             <textarea id="appFeel" name="appFeel" rows="3" required></textarea>
+            <button type="button" class="next-button">Next</button>
         </div>
         <div class="form-group">
             <label for="branding">Any suggestions for the app’s branding?</label>
             <textarea id="branding" name="branding" rows="3" required></textarea>
+            <button type="button" class="next-button">Next</button>
         </div>
         
         <div class="form-group">
             <label for="email">Email (for joining the waitlist):</label>
             <input type="email" id="email" name="email" required>
-        </div>
-        
-        <div class="form-group">
             <button type="submit">Submit</button>
         </div>
+    <h3>App Concept</h3>
+    <p>A new social platform where users can 'Light a beacon' when they're struggling with their mental health.<br><br>
+    While a beacon is lit, the user can jot down their thoughts and feelings, and other users can view the beacon and add their support.<br><br>
+    After 24 hours, beacons go out and are saved down as an entry in the user's journal.<br><br>
+    Users can follow each other and support each other in various ways.<br><br>
+    Essentially, it’s a social network for sharing the stuff you don’t want to share on Instagram. The real, raw, unfiltered reality of life. It’s the equivalent of opening up your mental health journal and letting everybody read it. A chance to be vulnerable and ask for support.<br><br>
+    <a href="https://beaconapp.ai">Learn more</a></p>
     </form>
     <div class="image">
         <img src="images/Easy_Blue.webp" class="small-image" alt="Easy Blue">
