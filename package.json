@@ -11,7 +11,7 @@
     "move-build": "xcopy /s /e /y client\\build\\* backend\\public\\"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^1.7.2",
     "body-parser": "^1.19.0",
     "concurrently": "^6.0.0",
     "cross-env": "^7.0.3",
@@ -22,6 +22,6 @@
     "nodemailer": "^6.6.3",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3"
+    "react-scripts": "^5.0.1"
   }
 }

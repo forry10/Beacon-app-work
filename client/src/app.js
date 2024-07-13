@@ -1,6 +1,6 @@
 import React from 'react';
 import './app.css';
-import SurveyForm from './surveyform';
+import SurveyForm from './surveyForm';
 
 function App() {
   return (
