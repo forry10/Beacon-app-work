@@ -1,12 +1,16 @@
 import React from 'react';
-import './app.css';
-import SurveyForm from './surveyForm';
+import SurveyForm from './SurveyForm';
+import { Container, Typography } from '@mui/material';
+import './App.css';
 
 function App() {
   return (
-    <div className="app">
+    <Container className="App">
+      <header className="App-header">
+        <Typography variant="h4">Beacon Survey</Typography>
+      </header>
       <SurveyForm />
-    </div>
+    </Container>
   );
 }
 

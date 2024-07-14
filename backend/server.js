@@ -1,117 +1,74 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const nodemailer = require('nodemailer');
+const next = require('next');
 require('dotenv').config();
 
-const express = require('express');
-const bodyParser = require('body-parser');
-const nodemailer = require('nodemailer');
-const path = require('path');
-const mongoose = require('mongoose');
+const dev = process.env.NODE_ENV !== 'production';
+const nextApp = next({ dev });
+const handle = nextApp.getRequestHandler();
+
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
-const mongoURI = process.env.MONGODB_URI;
+nextApp.prepare().then(() => {
+  app.use(cors());
+  app.use(bodyParser.json());
 
-if (!mongoURI) {
-    console.error('MongoDB connection string is not set in environment variables.');
-    process.exit(1);
-}
-
-mongoose.connect(mongoURI, {
+  mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
-}).then(() => {
-    console.log('Successfully connected to MongoDB');
-}).catch(err => {
-    console.error('Failed to connect to MongoDB', err);
-    process.exit(1);
-});
+  })
+  .then(() => console.log('Successfully connected to MongoDB'))
+  .catch(err => console.error('Failed to connect to MongoDB', err));
 
-const surveySchema = new mongoose.Schema({
-    age: Number,
-    gender: String,
-    mentalHealth: String,
-    talkToFriends: String,
-    friendResponse: String,
-    lightBeacon: String,
-    friendBeacon: String,
-    followInfluencers: String,
-    tiredOfFake: String,
-    downloadApp: String,
-    colorScheme: String,
-    appFeel: String,
-    branding: String,
-    email: String
-});
+  const Survey = require('./models/survey');
 
-const Survey = mongoose.model('Survey', surveySchema);
+  app.post('/api/survey', async (req, res) => {
+      const surveyData = new Survey(req.body);
+      try {
+          await surveyData.save();
+          res.status(200).send('Survey data saved successfully');
+          sendEmail(req.body);
+      } catch (error) {
+          res.status(500).send('Error saving survey data');
+      }
+  });
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+  const sendEmail = (data) => {
+      const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+              user: process.env.EMAILJS_USER,
+              pass: process.env.EMAILJS_PASS,
+          },
+      });
 
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'public')));
+      const mailOptions = {
+          from: process.env.EMAILJS_USER,
+          to: process.env.EMAILJS_USER,
+          subject: 'New Survey Submission',
+          text: JSON.stringify(data, null, 2),
+      };
 
-app.post('/submit-survey', async (req, res) => {
-    const formData = req.body;
+      transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+              console.log('Error sending email: ', error);
+          } else {
+              console.log('Email sent: ', info.response);
+          }
+      });
+  };
 
-    const transformedData = transformData(formData);
+  // Use Next.js to handle all routes
+  app.all('*', (req, res) => {
+    return handle(req, res);
+  });
 
-    try {
-        const newSurvey = new Survey(transformedData);
-        await newSurvey.save();
-        console.log('Survey data saved:', transformedData);
-
-        await sendEmail(transformedData);
-
-        res.send('Survey submitted successfully');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Failed to save survey data');
-    }
-});
-
-function transformData(data) {
-    return {
-        age: data.age,
-        gender: data.gender.toUpperCase(),
-        mentalHealth: data.mentalHealth === 'yes' ? 'Struggled' : 'Not Struggled',
-        talkToFriends: data.talkToFriends,
-        friendResponse: data.friendResponse,
-        lightBeacon: data.lightBeacon,
-        friendBeacon: data.friendBeacon,
-        followInfluencers: data.followInfluencers,
-        tiredOfFake: data.tiredOfFake,
-        downloadApp: data.downloadApp,
-        colorScheme: data.colorScheme,
-        appFeel: data.appFeel,
-        branding: data.branding,
-        email: data.email
-    };
-}
-
-async function sendEmail(data) {
-    let transporter = nodemailer.createTransport({
-        service: 'Gmail',
-        auth: {
-            user: process.env.EMAILJS_USER,
-            pass: process.env.EMAILJS_PASS
-        }
-    });
-
-    let mailOptions = {
-        from: data.email,
-        to: 'jack.forry10@gmail.com',
-        subject: 'Survey Results',
-        text: JSON.stringify(data, null, 2)
-    };
-
-    return transporter.sendMail(mailOptions);
-}
-
-// Catch-all handler to send back React's index.html for any requests that don't match API routes
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}/`);
+  app.listen(PORT, (err) => {
+    if (err) throw err;
+    console.log(`Server running at http://localhost:${PORT}`);
+  });
 });
