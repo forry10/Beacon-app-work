@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import styles from './SurveyForm.module.css';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import styles from '../styles/SurveyForm.module.css';
+import Image from 'next/image';
+import logo from '../public/Beacon_Logo-15.webp';
 
 const SurveyForm = () => {
   const [formData, setFormData] = useState({
@@ -17,26 +19,25 @@ const SurveyForm = () => {
     colorScheme: '',
     appFeel: '',
     branding: '',
-    email: ''
+    email: '',
   });
 
   const [currentStep, setCurrentStep] = useState(0);
-
   const questions = [
-    { name: 'age', label: 'Age', type: 'text' },
-    { name: 'gender', label: 'Gender', type: 'select', options: ['Male', 'Female', 'Other'] },
-    { name: 'mentalHealth', label: 'Have you ever struggled with your mental health?', type: 'select', options: ['Yes', 'No'] },
-    { name: 'talkToFriends', label: 'Did you talk to your friends about it?', type: 'select', options: ['Yes', 'No'] },
-    { name: 'friendResponse', label: 'If your friend told you they were struggling, what would you think and how would you respond?', type: 'text' },
-    { name: 'lightBeacon', label: 'Would you ever light a Beacon yourself?', type: 'select', options: ['Yes', 'No'] },
-    { name: 'friendBeacon', label: 'If your friend lit a Beacon, would you send them support / interact with it?', type: 'select', options: ['Yes', 'No'] },
-    { name: 'followInfluencers', label: 'Would you be interested in following influencers / celebrities on this and seeing their honest behind the scenes difficulties?', type: 'select', options: ['Yes', 'No'] },
-    { name: 'tiredOfFake', label: 'Are you tired of how fake everybody’s life seems on social media?', type: 'select', options: ['Yes', 'No'] },
-    { name: 'downloadApp', label: 'Would you download this app?', type: 'select', options: ['Yes', 'No'] },
-    { name: 'colorScheme', label: 'App Design Preferences - Color Scheme:', type: 'text' },
-    { name: 'appFeel', label: 'App Feel:', type: 'text' },
-    { name: 'branding', label: 'Branding:', type: 'text' },
-    { name: 'email', label: 'Email:', type: 'text' }
+    { name: 'age', type: 'text', label: 'Age' },
+    { name: 'gender', type: 'select', label: 'Gender', options: ['Male', 'Female', 'Other'] },
+    { name: 'mentalHealth', type: 'select', label: 'Have you ever struggled with your mental health?', options: ['Yes', 'No'] },
+    { name: 'talkToFriends', type: 'select', label: 'Did you talk to your friends about it?', options: ['Yes', 'No'] },
+    { name: 'friendResponse', type: 'text', label: 'If your friend told you they were struggling, what would you think and how would you respond?' },
+    { name: 'lightBeacon', type: 'select', label: 'Would you ever light a Beacon yourself?', options: ['Yes', 'No'] },
+    { name: 'friendBeacon', type: 'select', label: 'If your friend lit a Beacon, would you send them support / interact with it?', options: ['Yes', 'No'] },
+    { name: 'followInfluencers', type: 'select', label: 'Would you be interested in following influencers / celebrities on this and seeing their honest behind the scenes difficulties?', options: ['Yes', 'No'] },
+    { name: 'tiredOfFake', type: 'select', label: 'Are you tired of how fake everybody’s life seems on social media?', options: ['Yes', 'No'] },
+    { name: 'downloadApp', type: 'select', label: 'Would you download this app?', options: ['Yes', 'No'] },
+    { name: 'colorScheme', type: 'text', label: 'App Design Preferences - Color Scheme:' },
+    { name: 'appFeel', type: 'text', label: 'App Feel:' },
+    { name: 'branding', type: 'text', label: 'Branding:' },
+    { name: 'email', type: 'text', label: 'Email:' },
   ];
 
   const handleChange = (e) => {
@@ -52,86 +53,91 @@ const SurveyForm = () => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const response = await fetch('/api/submit-survey', {
+      const response = await fetch('/api/survey', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       if (response.ok) {
         alert('Survey submitted successfully!');
       } else {
-        alert('Failed to submit survey');
+        alert('Failed to submit survey.');
       }
     } catch (error) {
-      console.error('Error submitting survey:', error);
-      alert('Error submitting survey');
+      console.error('Error:', error);
+      alert('Failed to submit survey.');
+    }
+  };
+
+  const renderQuestion = (question) => {
+    switch (question.type) {
+      case 'text':
+        return (
+          <div key={question.name} className={`${styles.formGroup} form-group`}>
+            <label>{question.label}</label>
+            <input
+              type="text"
+              name={question.name}
+              value={formData[question.name]}
+              onChange={handleChange}
+              className={`${styles.formControl} form-control`}
+              required
+            />
+          </div>
+        );
+      case 'select':
+        return (
+          <div key={question.name} className={`${styles.formGroup} form-group`}>
+            <label>{question.label}</label>
+            <select
+              name={question.name}
+              value={formData[question.name]}
+              onChange={(e) => {
+                handleChange(e);
+                handleNext();
+              }}
+              className={`${styles.formControl} form-control`}
+              required
+            >
+              <option value="">Select</option>
+              {question.options.map((option, index) => (
+                <option key={index} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
   return (
     <div className={styles.surveyContainer}>
-      <div className={styles.surveyHeader}>
-        <img src="/Beacon_Logo-15.webp" alt="Beacon Logo" className={styles.logo} />
-        <h2>Beacon Survey</h2>
-        <p>
-          “A new social platform where users can 'Light a beacon' when they're struggling with their mental health.
-          While a beacon is lit, the user can jot down their thoughts and feelings, and other users can view the beacon and add their support.
-          After 24 hours, beacons go out and are saved down as an entry in the user's journal.
-          Users can follow each other and support each other in various ways.
-          Essentially, it’s a social network for sharing the stuff you don’t want to share on Instagram. The real, raw, unfiltered reality of life. It’s the equivalent of opening up your mental health journal and letting everybody read it. A chance to be vulnerable and ask for support and also it should have a link to "beaconapp.ai" so people can go learn more.”
-        </p>
+      <div className={styles.surveyForm}>
+        <Image src={logo} alt="Beacon Logo" className={styles.logo} />
+        <h2 className={styles.surveyTitle}>Beacon Survey</h2>
+        <form onSubmit={handleSubmit}>
+          {renderQuestion(questions[currentStep])}
+          {questions[currentStep].type === 'text' && currentStep !== questions.length - 1 && (
+            <button type="button" className="btn btn-primary" onClick={handleNext}>
+              Next
+            </button>
+          )}
+          {currentStep === questions.length - 1 && (
+            <button type="submit" className="btn btn-primary">
+              Submit
+            </button>
+          )}
+        </form>
       </div>
-      <form className={styles.surveyForm} onSubmit={handleSubmit}>
-        <TransitionGroup>
-          {questions.map((question, index) => (
-            <CSSTransition key={question.name} timeout={500} classNames="fade">
-              <div style={{ display: currentStep === index ? 'block' : 'none' }}>
-                <label htmlFor={question.name}>{question.label}</label>
-                {question.type === 'text' ? (
-                  <input
-                    type="text"
-                    id={question.name}
-                    name={question.name}
-                    value={formData[question.name]}
-                    onChange={handleChange}
-                    required
-                  />
-                ) : (
-                  <select
-                    id={question.name}
-                    name={question.name}
-                    value={formData[question.name]}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">Select</option>
-                    {question.options.map((option) => (
-                      <option key={option} value={option.toLowerCase()}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              </div>
-            </CSSTransition>
-          ))}
-        </TransitionGroup>
-        {questions[currentStep].type === 'text' && (
-          <button type="button" onClick={handleNext}>
-            Next
-          </button>
-        )}
-        {currentStep === questions.length - 1 && (
-          <button type="submit">
-            Submit
-          </button>
-        )}
-      </form>
     </div>
   );
 };
