@@ -1,0 +1,53 @@
+{
+    "name": "beacon-app-work",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "concurrently \"npm run dev:client\" \"npm run dev:backend\"",
+        "dev:client": "cd client && next dev",
+        "dev:backend": "cd backend && nodemon server.js",
+        "build": "cd client && next build",
+        "start": "cd client && next start",
+        "lint": "cd client && next lint"
+    },
+    "dependencies": {
+        "@aws-sdk/client-s3": "3.485.0",
+        "@emotion/cache": "11.11.0",
+        "@emotion/react": "11.11.1",
+        "@emotion/styled": "11.11.0",
+        "@mui/icons-material": "5.14.11",
+        "@mui/material": "5.14.11",
+        "@types/d3": "7.4.3",
+        "body-parser": "^1.19.0",
+        "concurrently": "^7.0.0",
+        "cors": "^2.8.5",
+        "d3": "7.8.5",
+        "dotenv": "^10.0.0",
+        "express": "^4.17.1",
+        "marked": "9.1.2",
+        "marked-react": "2.0.0",
+        "mongodb": "6.1.0",
+        "mongoose": "7.5.3",
+        "next": "13.5.3",
+        "nodemailer": "^6.6.3",
+        "react": "18.2.0",
+        "react-dom": "18.2.0",
+        "react-material-ui-carousel": "3.4.2",
+        "react-transition-group": "^4.4.5",
+        "sharp": "0.32.6"
+    },
+    "devDependencies": {
+        "@types/node": "20.8.0",
+        "@types/react": "18.2.24",
+        "@types/react-dom": "18.2.8",
+        "@typescript-eslint/eslint-plugin": "6.8.0",
+        "@typescript-eslint/parser": "6.8.0",
+        "cross-env": "^7.0.3",
+        "eslint": "8.52.0",
+        "eslint-config-next": "13.5.3",
+        "eslint-plugin-react": "7.33.2",
+        "nodemon": "^2.0.12",
+        "prettier": "3.0.3",
+        "typescript": "5.2.2"
+    }
+}
